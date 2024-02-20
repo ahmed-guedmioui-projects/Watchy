@@ -25,7 +25,6 @@ import com.ahmedapps.watchy.R
 import com.ahmedapps.watchy.auth.presentation.signin.SignInScreen
 import com.ahmedapps.watchy.auth.presentation.signup.SignUpScreen
 import com.ahmedapps.watchy.auth.util.AuthResult
-import com.ahmedapps.watchy.categories.presentaion.CoreCategoriesScreen
 import com.ahmedapps.watchy.details.presentation.details.CoreDetailScreen
 import com.ahmedapps.watchy.favorites.presentation.CoreFavoriteScreen
 import com.ahmedapps.watchy.main.presentation.main.MainScreen
@@ -192,13 +191,6 @@ class MainActivity : ComponentActivity() {
                 )
             }
 
-            composable(Route.CORE_CATEGORIES_SCREEN) {
-                CoreCategoriesScreen(
-                    mainNavController = mainNavController,
-                    mainUiState = mainUiState
-                )
-            }
-
             composable(Route.CORE_FAVORITES_SCREEN) {
                 CoreFavoriteScreen(
                     mainNavController = mainNavController,
@@ -234,7 +226,6 @@ class MainActivity : ComponentActivity() {
                 val id = it.arguments?.getInt("id") ?: 0
                 CoreDetailScreen(
                     id = id,
-                    mainNavController = mainNavController,
                     mainUiState = mainUiState
                 )
             }

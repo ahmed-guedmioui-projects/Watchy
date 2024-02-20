@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -73,18 +72,16 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.ahmedapps.watchy.R
 import com.ahmedapps.watchy.details.presentation.detail_ui_components.MovieImage
-import com.ahmedapps.watchy.details.presentation.similar.SimilarScreen
 import com.ahmedapps.watchy.details.presentation.watch_video.WatchVideoScreen
 import com.ahmedapps.watchy.main.data.remote.api.MediaApi
 import com.ahmedapps.watchy.main.domain.models.Media
 import com.ahmedapps.watchy.main.presentation.main.MainUiState
 import com.ahmedapps.watchy.ui.theme.SmallRadius
-import com.ahmedapps.watchy.ui.ui_shared_components.RatingBar
-import com.ahmedapps.watchy.util.genresProvider
 import com.ahmedapps.watchy.ui.theme.font
-import com.ahmedapps.watchy.ui.ui_shared_components.MediaItemImage
+import com.ahmedapps.watchy.ui.ui_shared_components.RatingBar
 import com.ahmedapps.watchy.util.APIConstants
 import com.ahmedapps.watchy.util.Route
+import com.ahmedapps.watchy.util.genresProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -92,7 +89,6 @@ import kotlinx.coroutines.launch
 fun CoreDetailScreen(
     id: Int,
     mainUiState: MainUiState,
-    mainNavController: NavController,
 ) {
 
     val detailsViewModel = hiltViewModel<DetailsViewModel>()
@@ -106,26 +102,8 @@ fun CoreDetailScreen(
     ) {
         composable(route = Route.DETAILS_SCREEN) {
             DetailScreen(
-                mainNavController = mainNavController,
-                detailsNavController = detailsNavController,
                 detailsScreenState = mediaDetailsScreenState,
                 onEvent = detailsViewModel::onEvent
-            )
-        }
-
-        composable(
-            "${Route.SIMILAR_SCREEN}?title={title}",
-            arguments = listOf(
-                navArgument("title") { type = NavType.StringType },
-            )
-        ) {
-
-            val name = it.arguments?.getString("title") ?: ""
-
-            SimilarScreen(
-                mainNavController = mainNavController,
-                detailsScreenState = mediaDetailsScreenState,
-                name = name,
             )
         }
 
@@ -177,8 +155,6 @@ fun CoreDetailScreen(
 @Composable
 fun DetailScreen(
     detailsScreenState: DetailsScreenState,
-    detailsNavController: NavController,
-    mainNavController: NavController,
     onEvent: (DetailsUiEvents) -> Unit
 ) {
 
@@ -257,13 +233,6 @@ fun DetailScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 OverviewSection(media = detailsScreenState.media)
-
-                SimilarMediaSection(
-                    mainNavController = mainNavController,
-                    detailsNavController = detailsNavController,
-                    media = detailsScreenState.media,
-                    detailsScreenState = detailsScreenState
-                )
 
                 Spacer(modifier = Modifier.height(100.dp))
 
@@ -383,15 +352,17 @@ fun InfoSection(
     media: Media,
     detailsScreenState: DetailsScreenState,
 ) {
-    var genres = ""
-    LaunchedEffect(key1 = true) {
+
+    var genres by remember {
+        mutableStateOf("")
+    }
+    LaunchedEffect(media) {
         genres = genresProvider(
             genreIds = media.genreIds,
             allGenres = if (media.mediaType == APIConstants.MOVIE) detailsScreenState.moviesGenresList
             else detailsScreenState.tvGenresList
         )
     }
-
 
     Column(
         modifier = Modifier.padding(end = 8.dp)
@@ -422,7 +393,7 @@ fun InfoSection(
                     modifier = Modifier.padding(
                         horizontal = 4.dp
                     ),
-                    text = media.voteAverage.toString().take(3),
+                    text = media.voteAverage.div(2).toString().take(3),
                     fontFamily = font,
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -430,38 +401,36 @@ fun InfoSection(
             }
         }
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(7.dp))
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-
-            if (media.releaseDate.isNotEmpty()) {
-                Text(
-                    text = media.releaseDate.take(4),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontFamily = font,
-                    fontSize = 15.sp
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-            }
-
-
+        if (media.releaseDate.isNotEmpty()) {
             Text(
-                modifier = Modifier
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        shape = RoundedCornerShape(6.dp)
-                    )
-                    .padding(horizontal = 6.dp, vertical = 0.5.dp),
-                text = if (media.adult) stringResource(R.string._18)
-                else stringResource(R.string._12),
+                text = media.releaseDate.take(4),
                 color = MaterialTheme.colorScheme.onSurface,
                 fontFamily = font,
-                fontSize = 12.sp
+                fontSize = 15.sp
             )
+            Spacer(modifier = Modifier.width(8.dp))
         }
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(7.dp))
+
+        Text(
+            modifier = Modifier
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    shape = RoundedCornerShape(6.dp)
+                )
+                .padding(horizontal = 6.dp, vertical = 0.5.dp),
+            text = if (media.adult) stringResource(R.string._18)
+            else stringResource(R.string._12),
+            color = MaterialTheme.colorScheme.onSurface,
+            fontFamily = font,
+            fontSize = 12.sp
+        )
+
+        Spacer(modifier = Modifier.height(7.dp))
 
         if (genres.isNotEmpty()) {
             Text(
@@ -472,7 +441,7 @@ fun InfoSection(
                 color = MaterialTheme.colorScheme.onSurface,
                 lineHeight = 16.sp
             )
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(7.dp))
         }
 
         if (detailsScreenState.readableTime.isNotEmpty()) {
@@ -480,7 +449,7 @@ fun InfoSection(
                 modifier = Modifier.padding(end = 8.dp),
                 text = detailsScreenState.readableTime,
                 fontFamily = font,
-                fontSize = 15.sp,
+                fontSize = 16.sp,
                 color = MaterialTheme.colorScheme.onSurface,
                 lineHeight = 16.sp
             )
@@ -528,71 +497,6 @@ fun OverviewSection(
                 color = MaterialTheme.colorScheme.onSurface,
                 lineHeight = 16.sp
             )
-        }
-    }
-}
-
-@Composable
-fun SimilarMediaSection(
-    mainNavController: NavController,
-    detailsNavController: NavController,
-    media: Media,
-    detailsScreenState: DetailsScreenState,
-) {
-
-    val title = stringResource(id = R.string.similar)
-    val mediaList = detailsScreenState.smallSimilarList
-
-    if (mediaList.isNotEmpty()) {
-        Column {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 22.dp, end = 22.dp, top = 22.dp, bottom = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = title,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontFamily = font,
-                    fontSize = 18.sp
-                )
-
-                Text(
-                    modifier = Modifier
-                        .alpha(0.85f)
-                        .clickable {
-                            detailsNavController.navigate(
-                                "${Route.SIMILAR_SCREEN}?title=${media.title}"
-                            )
-                        },
-                    text = stringResource(id = R.string.see_all),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontFamily = font,
-                    fontSize = 14.sp,
-                )
-            }
-
-            LazyRow {
-                items(mediaList.size) {
-
-                    var paddingEnd = 0.dp
-                    if (it == mediaList.size - 1) {
-                        paddingEnd = 16.dp
-                    }
-
-                    MediaItemImage(
-                        media = mediaList[it],
-                        mainNavController = mainNavController,
-                        modifier = Modifier
-                            .height(200.dp)
-                            .width(150.dp)
-                            .padding(start = 16.dp, end = paddingEnd)
-                    )
-                }
-            }
         }
     }
 }

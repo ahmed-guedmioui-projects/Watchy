@@ -1,19 +1,13 @@
 package com.ahmedapps.watchy.main.presentation.main
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
@@ -37,12 +31,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -52,13 +44,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.ahmedapps.watchy.R
-import com.ahmedapps.watchy.main.presentation.main.ui_componentes.MediaHomeScreenSectionOrShimmer
+import com.ahmedapps.watchy.main.presentation.main.ui_componentes.MediaHomeScreenSection
 import com.ahmedapps.watchy.ui.theme.BigRadius
 import com.ahmedapps.watchy.ui.theme.MediumRadius
 import com.ahmedapps.watchy.ui.theme.font
 import com.ahmedapps.watchy.ui.ui_shared_components.AutoSwipeSection
 import com.ahmedapps.watchy.ui.ui_shared_components.NonFocusedTopBar
-import com.ahmedapps.watchy.ui.ui_shared_components.shimmerEffect
 import com.ahmedapps.watchy.util.Route
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -77,11 +68,11 @@ fun MainScreen(
             Column {
                 FloatingActionButton(
                     onClick = {
-                        mainNavController.navigate(Route.CORE_CATEGORIES_SCREEN)
+                        mainNavController.navigate(Route.CORE_FAVORITES_SCREEN)
                     },
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.Category,
+                        imageVector = Icons.Rounded.Bookmarks,
                         contentDescription = stringResource(R.string.categories)
                     )
                 }
@@ -132,9 +123,8 @@ fun MainScreen(
                     .padding(top = BigRadius.dp),
             ) {
 
-                MediaHomeScreenSectionOrShimmer(
+                MediaHomeScreenSection(
                     route = Route.TRENDING_NOW_SCREEN,
-                    showShimmer = mainUiState.trendingAllList.isEmpty(),
                     mainNavController = mainNavController,
                     mainUiState = mainUiState
                 )
@@ -155,7 +145,6 @@ fun MainScreen(
                             .fillMaxWidth(0.9f)
                             .padding(top = 20.dp, bottom = 12.dp)
                             .clip(RoundedCornerShape(MediumRadius))
-                            .shimmerEffect(false)
                             .align(CenterHorizontally)
                     )
                 } else {
@@ -169,18 +158,16 @@ fun MainScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                MediaHomeScreenSectionOrShimmer(
+                MediaHomeScreenSection(
                     route = Route.TV_SERIES_SCREEN,
-                    showShimmer = mainUiState.popularTvSeriesList.isEmpty(),
                     mainNavController = mainNavController,
                     mainUiState = mainUiState
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                MediaHomeScreenSectionOrShimmer(
+                MediaHomeScreenSection(
                     route = Route.MOVIES_SCREEN,
-                    showShimmer = mainUiState.popularMoviesList.isEmpty(),
                     mainNavController = mainNavController,
                     mainUiState = mainUiState
                 )
@@ -197,40 +184,12 @@ fun MainScreen(
             )
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(modifier = Modifier.weight(1f)) {
-                NonFocusedTopBar(
-                    isMainScreen = true,
-                    name = mainUiState.name.take(1),
-                    toolbarOffsetHeightPx = toolbarOffsetHeightPx.floatValue.roundToInt(),
-                    mainNavController = mainNavController,
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .size(47.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.secondaryContainer)
-                    .clickable {
-                        mainNavController.navigate(Route.CORE_FAVORITES_SCREEN)
-                    }
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .align(Center),
-                    imageVector = Icons.Rounded.Bookmarks,
-                    contentDescription = stringResource(R.string.favorites_and_bookmarks),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-        }
+        NonFocusedTopBar(
+            isMainScreen = true,
+            name = mainUiState.name.take(1),
+            toolbarOffsetHeightPx = toolbarOffsetHeightPx.floatValue.roundToInt(),
+            mainNavController = mainNavController,
+        )
 
     }
 }

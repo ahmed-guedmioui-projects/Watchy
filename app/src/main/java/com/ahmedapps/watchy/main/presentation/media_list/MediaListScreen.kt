@@ -33,7 +33,7 @@ import com.ahmedapps.watchy.main.presentation.main.MainUiEvents
 import com.ahmedapps.watchy.main.presentation.main.MainUiState
 import com.ahmedapps.watchy.ui.theme.BigRadius
 import com.ahmedapps.watchy.ui.theme.HugeRadius
-import com.ahmedapps.watchy.ui.ui_shared_components.ListShimmerEffect
+
 import com.ahmedapps.watchy.ui.ui_shared_components.MediaItemImageAndTitle
 import com.ahmedapps.watchy.ui.ui_shared_components.NonFocusedTopBar
 import com.ahmedapps.watchy.util.Route
@@ -98,29 +98,25 @@ fun MediaListScreen(
             .pullRefresh(refreshState)
     ) {
 
-        if (mediaList.isEmpty()) {
-            ListShimmerEffect(HugeRadius)
-        } else {
 
-            val listState = rememberLazyGridState()
+        val listState = rememberLazyGridState()
 
-            LazyVerticalGrid(
-                state = listState,
-                contentPadding = PaddingValues(top = HugeRadius.dp),
-                columns = GridCells.Adaptive(190.dp),
-            ) {
+        LazyVerticalGrid(
+            state = listState,
+            contentPadding = PaddingValues(top = HugeRadius.dp),
+            columns = GridCells.Adaptive(190.dp),
+        ) {
 
-                items(mediaList.size) { i ->
+            items(mediaList.size) { i ->
 
-                    MediaItemImageAndTitle(
-                        media = mediaList[i],
-                        mainNavController = mainNavController,
-                        mainUiState = mainUiState
-                    )
+                MediaItemImageAndTitle(
+                    media = mediaList[i],
+                    mainNavController = mainNavController,
+                    mainUiState = mainUiState
+                )
 
-                    if (i >= mediaList.size - 1 && !mainUiState.isLoading) {
-                        onEvent(MainUiEvents.OnPaginate(route = route))
-                    }
+                if (i >= mediaList.size - 1 && !mainUiState.isLoading) {
+                    onEvent(MainUiEvents.OnPaginate(route = route))
                 }
 
             }

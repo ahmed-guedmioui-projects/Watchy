@@ -36,9 +36,7 @@ class MediaDetailsRepositoryImpl @Inject constructor(
             val media = mainRepository.getMediaById(id = id)
 
             val doDetailsExist =
-                media.runtime != 0 ||
-                        media.status.isNotEmpty() ||
-                        media.tagline.isNotEmpty()
+                media.runtime != 0 || media.status.isNotEmpty() || media.tagline.isNotEmpty()
 
             if (!isRefresh && doDetailsExist) {
                 emit(Resource.Success(data = media))

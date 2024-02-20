@@ -81,19 +81,6 @@ class SignInViewModel @Inject constructor(
             }
         }
     }
-
-    private fun authenticate() {
-        viewModelScope.launch {
-            _signInState.update {
-                it.copy(isLoading = true)
-            }
-            val result = authRepository.authenticate()
-            _authResultChannel.send(result)
-            _signInState.update {
-                it.copy(isLoading = false)
-            }
-        }
-    }
 }
 
 

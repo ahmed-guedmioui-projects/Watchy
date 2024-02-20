@@ -188,9 +188,11 @@ fun MediaItemImageAndTitle(
                 },
             )
 
-            var genres = ""
-            LaunchedEffect(key1 = true) {
-                genresProvider(
+            var genres by remember {
+                mutableStateOf("")
+            }
+            LaunchedEffect(media) {
+               genres = genresProvider(
                     genreIds = media.genreIds,
                     allGenres = if (media.mediaType == APIConstants.MOVIE)
                         mainUiState.moviesGenresList

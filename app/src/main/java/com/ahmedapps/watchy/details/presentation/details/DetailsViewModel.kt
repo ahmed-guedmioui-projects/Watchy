@@ -6,7 +6,6 @@ import com.ahmedapps.watchy.favorites.domain.repository.FavoritesRepository
 import com.ahmedapps.watchy.main.data.remote.api.MediaApi.Companion.API_KEY
 import com.ahmedapps.watchy.main.domain.repository.MainRepository
 import com.ahmedapps.watchy.details.domain.repository.MediaDetailsRepository
-import com.ahmedapps.watchy.details.domain.repository.SimilarMediaRepository
 import com.ahmedapps.watchy.details.domain.usecase.MinutesToReadableTime
 import com.ahmedapps.watchy.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +21,6 @@ import javax.inject.Inject
 class DetailsViewModel @Inject constructor(
     private val mainRepository: MainRepository,
     private val mediaDetailsRepository: MediaDetailsRepository,
-    private val similarMediaRepository: SimilarMediaRepository,
     private val favoritesRepository: FavoritesRepository
 ) : ViewModel() {
 
@@ -118,9 +116,7 @@ class DetailsViewModel @Inject constructor(
             }
 
             loadDetails(isRefresh) {
-                loadSimilarMedialList(isRefresh) {
-                    loadVideosList(isRefresh)
-                }
+                loadVideosList(isRefresh)
             }
         }
     }
@@ -162,52 +158,6 @@ class DetailsViewModel @Inject constructor(
 
                         is Resource.Error -> {
                             onLoadDetailsFinished()
-                        }
-
-                        is Resource.Loading -> {
-                            _detailsScreenState.update {
-                                it.copy(
-                                    isLoading = result.isLoading
-                                )
-                            }
-                        }
-                    }
-                }
-        }
-    }
-
-    private fun loadSimilarMedialList(
-        isRefresh: Boolean,
-        onLoadSimilarMedialList: () -> Unit
-    ) {
-
-        viewModelScope.launch {
-
-            similarMediaRepository
-                .getSimilarMediaList(
-                    isRefresh = isRefresh,
-                    id = detailsScreenState.value.media?.mediaId ?: 0,
-                    type = detailsScreenState.value.media?.mediaType ?: "",
-                    page = 1,
-                    apiKey = API_KEY
-                )
-                .collect { result ->
-                    when (result) {
-                        is Resource.Success -> {
-                            result.data?.let { similarMediaList ->
-                                _detailsScreenState.update {
-                                    it.copy(
-                                        similarList = similarMediaList,
-                                        smallSimilarList = similarMediaList.take(10)
-                                    )
-                                }
-                            }
-
-                            onLoadSimilarMedialList()
-                        }
-
-                        is Resource.Error -> {
-                            onLoadSimilarMedialList()
                         }
 
                         is Resource.Loading -> {

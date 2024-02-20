@@ -19,7 +19,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import coil.compose.AsyncImagePainter
-import com.ahmedapps.watchy.ui.ui_shared_components.shimmerEffect
 import com.ahmedapps.watchy.ui.theme.Radius
 import com.ahmedapps.watchy.ui.ui_shared_components.getAverageColor
 
@@ -66,7 +65,6 @@ fun MovieImage(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .shimmerEffect(false)
         )
     }
 }

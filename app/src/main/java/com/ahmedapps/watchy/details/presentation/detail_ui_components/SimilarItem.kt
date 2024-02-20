@@ -190,8 +190,10 @@ fun SimilarItem(
                 },
             )
 
-            var genres = ""
-            LaunchedEffect(key1 = true) {
+            var genres by remember {
+                mutableStateOf("")
+            }
+            LaunchedEffect(media) {
                 genres = genresProvider(
                     genreIds = media.genreIds,
                     allGenres = if (media.mediaType == APIConstants.MOVIE)

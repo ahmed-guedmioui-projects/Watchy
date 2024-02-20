@@ -12,9 +12,9 @@ interface AuthRepository {
         email: String, password: String
     ): AuthResult<Unit>
 
-    suspend fun singOut(): AuthResult<Unit>
-
     suspend fun authenticate(): AuthResult<Unit>
+
+    suspend fun singOut(): AuthResult<Unit>
 
 
 }

@@ -12,9 +12,6 @@ data class DetailsScreenState(
     val videoId: String = "",
     val readableTime: String = "",
 
-    val similarList: List<Media> = emptyList(),
-    val smallSimilarList: List<Media> = emptyList(),
-
     val videosList: List<String> = emptyList(),
     val moviesGenresList: List<Genre> = emptyList(),
     val tvGenresList: List<Genre> = emptyList(),

@@ -52,7 +52,7 @@ fun NonFocusedTopBar(
                     if (title.isNotEmpty()) MaterialTheme.colorScheme.background
                     else Color.Transparent
                 )
-                .padding(start = 16.dp, end = if (isMainScreen) 8.dp else 16.dp),
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             NonFocusedSearchBar(

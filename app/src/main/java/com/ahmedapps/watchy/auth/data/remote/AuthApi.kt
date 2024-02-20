@@ -22,7 +22,7 @@ interface AuthApi {
 
     @GET(BackendConstants.AUTHENTICATE)
     suspend fun authenticate(
-        @Header("Authorization") token: String
+        @Body request: AuthRequest
     )
 
 }
